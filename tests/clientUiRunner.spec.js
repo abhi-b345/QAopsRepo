@@ -4,23 +4,52 @@ const { dashboard } = require('../clientUiFiles/dashboard');
 const { checkoutPage } = require('../clientUiFiles/checkoutPage');
 const { orderPlace } = require('../clientUiFiles/orderPlace');
 
-test("test to validate client order", async ({ page }) => {
-    const email = "tyagi.b345@gmail.com";
-    const password = "Abhishek@123";
-    const selectItem = "ZARA COAT 3";
-    const pageUrl = "https://rahulshettyacademy.com/client/#/auth/login";
-    const loginPageOperation = new loginPage(page, email, password, pageUrl);
-    await loginPageOperation.loginOpe();
-    await page.waitForLoadState('networkidle');
+const dataSet = JSON.parse(
+    JSON.stringify(require('../utils/uiAppData.json'))
+);
 
-    const dashboardSelectItem = new dashboard(page, pageUrl, selectItem);
-    await dashboardSelectItem.selectItem();
-    const cartItem = await dashboardSelectItem.cartCheck();
-    await expect(cartItem).toContain(selectItem);
+for (const data of dataSet) {
 
-    const checkoutLogic = new checkoutPage(page, pageUrl, email);
-    await checkoutLogic.checkout();
+    test(`test to validate client order ${data.selectItem}`, async ({ page }) => {
 
-    const placeOrderLogic = new orderPlace(page, pageUrl, selectItem);
-    await placeOrderLogic.placeOrder();
-});
+        const pageUrl = "https://rahulshettyacademy.com/client/#/auth/login";
+
+        const loginPageOperation = new loginPage(
+            page,
+            data.email,
+            data.password,
+            pageUrl
+        );
+
+        await loginPageOperation.loginOpe();
+        await page.waitForLoadState('networkidle');
+
+        const dashboardSelectItem = new dashboard(
+            page,
+            pageUrl,
+            data.selectItem
+        );
+
+        await dashboardSelectItem.selectItem();
+
+        const cartItem = await dashboardSelectItem.cartCheck();
+
+        await expect(cartItem).toContain(data.selectItem);
+
+        const checkoutLogic = new checkoutPage(
+            page,
+            pageUrl,
+            data.email
+        );
+
+        await checkoutLogic.checkout();
+
+        const placeOrderLogic = new orderPlace(
+            page,
+            pageUrl,
+            data.selectItem
+        );
+
+        await placeOrderLogic.placeOrder();
+    });
+}
