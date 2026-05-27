@@ -19,6 +19,7 @@ test("test to validate client order", async({page})=>
     await expect(cartItem).toContain(selectItem);
 
     const checkoutLogic = new checkoutPage(page);
+    await checkoutLogic.checkout();
 
     
 
