@@ -18,15 +18,16 @@ test.beforeAll(async()=>
 
 const fakePayloadOrder = {id: "6a0393e2965c23b43b144d11"};
 
-test('intercet/mocking of API with route.fullfill()', async ({page})=>
+test('intercept/mocking of API with route.fulfill()', async ({page})=>
 {
     await page.addInitScript(value =>
     {
-        window.localStorage.setItem('token', value)
-    }, token
-    )
-    await page.goto("https://rahulshettyacademy.com/api/ecom/auth/login");
+        window.localStorage.setItem('token', value);
+    }, token);
+    
+    await page.goto("https://rahulshettyacademy.com/api/ecom/order/orders");
     await page.getByRole("button", {name: "ORDERS"}).click();
+    
     await page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-details?id=*", async route =>
     {
         const response = await page.request.fetch(route.request());
@@ -38,22 +39,19 @@ test('intercet/mocking of API with route.fullfill()', async ({page})=>
                 body,
             }
         );
-    }
-    );
+    });
+    
     await page.getByRole("button", {name: "View"}).first().click();
-
-
 });
 
 test.only('intercept with abort method', async({page})=>
 {
-    
     await page.addInitScript(value=>
     {
-        window.localStorage.setItem('token', value)
+        window.localStorage.setItem('token', value);
     }, token);
 
-    await page.route('**/*.css', route=>route.abort());
+    await page.route('**/*.css', route => route.abort());
 
     page.on('request', request =>
     {
@@ -63,9 +61,7 @@ test.only('intercept with abort method', async({page})=>
     page.on('response', response =>
     {
         console.log(response.url(), response.status());
-    }
-);
+    });
 
-    
-
-})
+    await page.goto("https://rahulshettyacademy.com/client");
+});

@@ -11,7 +11,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "npx playwright test tests/webIntercept1.spec.js"
+    "test": "npx playwright test tests/clientUiRunner.spec.js"
   },
   "dependencies": {
     "@cucumber/cucumber": "^12.9.0",
