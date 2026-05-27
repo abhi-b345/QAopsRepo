@@ -10,6 +10,9 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   test:
     timeout-minutes: 60
@@ -18,24 +21,35 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: npm
+          cache: 'npm'
 
+      - name: Install Dependencies
       - name: Install Dependencies
         run: npm ci
 
       - name: Install Playwright Chromium
         run: npx playwright install chromium
 
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
       - name: Azure Login
+        uses: azure/login@v2
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDS }}
 
+      - name: Run Playwright Tests
       - name: Run Playwright Tests
         env:
           PLAYWRIGHT_SERVICE_URL: ${{ vars.PLAYWRIGHT_SERVICE_URL }}
@@ -44,10 +58,14 @@ jobs:
             --config=playwright.service.config.js \
             --workers=2 \
             --reporter=line
+        run: npx playwright test --config=playwright.service.config.js --workers=2 --reporter=line
 
       - name: Upload Playwright Report
         if: always()
         uses: actions/upload-artifact@v4
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: playwright-report
           path: playwright-report/
